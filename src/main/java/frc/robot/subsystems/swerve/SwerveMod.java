@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.swerveUtil.CTREModuleState;
 import frc.lib.util.swerveUtil.RevSwerveModuleConstants;
 import frc.robot.SwerveConstants;
@@ -13,6 +14,7 @@ import java.time.chrono.ThaiBuddhistEra;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.EncoderType;
 import com.revrobotics.RelativeEncoder;
@@ -31,8 +33,8 @@ public class SwerveMod implements SwerveModule
     public int moduleNumber;
     private Rotation2d angleOffset;
 
-    private CANSparkMax mAngleMotor;
-    private CANSparkMax mDriveMotor;
+    private CANSparkFlex mAngleMotor;
+    private CANSparkFlex mDriveMotor;
 
     private SparkAbsoluteEncoder angleEncoder;
     private RelativeEncoder relAngleEncoder;
@@ -46,11 +48,11 @@ public class SwerveMod implements SwerveModule
         
        
         /* Angle Motor Config */
-        mAngleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
+        mAngleMotor = new CANSparkFlex(moduleConstants.angleMotorID, MotorType.kBrushless);
         configAngleMotor();
 
         /* Drive Motor Config */
-        mDriveMotor = new CANSparkMax(moduleConstants.driveMotorID,  MotorType.kBrushless);
+        mDriveMotor = new CANSparkFlex(moduleConstants.driveMotorID,  MotorType.kBrushless);
         configDriveMotor();
 
          /* Angle Encoder Config */
@@ -85,7 +87,7 @@ public class SwerveMod implements SwerveModule
         // relAngleEncoder.setVelocityConversionFactor(SwerveConfig.DegreesPerTurnRotation / 60);
     
 
-        resetToAbsolute();
+        zeroAngleEncoder();
         mDriveMotor.burnFlash();
         mAngleMotor.burnFlash();
         
@@ -178,12 +180,19 @@ public class SwerveMod implements SwerveModule
         //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
         SparkPIDController controller = mAngleMotor.getPIDController();
+        controller.setP(SwerveConfig.angleKP);
+        controller.setI(SwerveConfig.angleKI);
+        controller.setD(SwerveConfig.angleKD);
+        controller.setFF(SwerveConfig.angleKF);
         
         double degReference = angle.getDegrees();
+
+        SmartDashboard.putNumber("degReference", degReference);
+        SmartDashboard.putNumber("Angle kP", controller.getP());
      
        
         
-        controller.setReference (degReference, ControlType.kPosition, 0);
+        controller.setReference(degReference, ControlType.kPosition, 0);
         
     }
 
@@ -211,11 +220,11 @@ public class SwerveMod implements SwerveModule
         this.moduleNumber = moduleNumber;
     }
 
-    private void resetToAbsolute()
+    private void zeroAngleEncoder()
     {
     
-        // double absolutePosition =getAngleEncoder().getDegrees() - angleOffset.getDegrees();
-        // relAngleEncoder.setPosition(absolutePosition);
+        // double absolutePosition = getAngleEncoder().getDegrees() - angleOffset.getDegrees();
+        angleEncoder.setZeroOffset(angleOffset.getDegrees());
     }
 
   

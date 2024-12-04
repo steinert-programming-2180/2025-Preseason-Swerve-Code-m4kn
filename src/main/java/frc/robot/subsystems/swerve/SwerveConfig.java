@@ -15,7 +15,7 @@ import frc.lib.util.swerveUtil.COTSFalconSwerveConstants;
 public class SwerveConfig 
 {
     
-    public CANCoderConfiguration canCoderConfig;
+    // public CANCoderConfiguration canCoderConfig;
 
     //
     public static final IdleMode driveIdleMode = IdleMode.kBrake;
@@ -80,7 +80,7 @@ public class SwerveConfig
     public static final double closedLoopRamp = 0.0;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.05;
+    public static final double angleKP = 0.01;
     public static final double angleKI = 0;
     public static final double angleKD = 0;
     public static final double angleKF = 0;
@@ -110,11 +110,11 @@ public class SwerveConfig
 
     public SwerveConfig()
     {
-        canCoderConfig = new CANCoderConfiguration();
-        canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        canCoderConfig.sensorDirection = canCoderInvert;
-        canCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        // canCoderConfig = new CANCoderConfiguration();
+        // canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        // canCoderConfig.sensorDirection = canCoderInvert;
+        // canCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        // canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
     }
 }
 

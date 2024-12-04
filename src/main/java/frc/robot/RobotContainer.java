@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -44,19 +45,21 @@ public class RobotContainer {
     private final PoseEstimator s_PoseEstimator = new PoseEstimator();
 
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    // The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
+                () -> -driver.getRawAxis(2), 
                 () -> false,
                 () -> dampen.getAsBoolean(),
                 () -> 1 //speed multiplier 
             )
         );
+
+        SmartDashboard.putNumber("Rotation Controller Axis", rotationAxis);
 
 
 
