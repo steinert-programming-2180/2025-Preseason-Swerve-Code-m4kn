@@ -37,8 +37,8 @@ public class SwerveMod implements SwerveModule
     private CANSparkFlex mDriveMotor;
 
     private SparkAbsoluteEncoder angleEncoder;
-    private RelativeEncoder relAngleEncoder;
-    private RelativeEncoder relDriveEncoder;
+    // private RelativeEncoder relAngleEncoder;
+    private SparkAbsoluteEncoder driveEncoder;
 
 
     public SwerveMod(int moduleNumber, RevSwerveModuleConstants moduleConstants)
@@ -56,7 +56,6 @@ public class SwerveMod implements SwerveModule
         configDriveMotor();
 
          /* Angle Encoder Config */
-        angleEncoder = mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
         configEncoders();
 
 
@@ -72,13 +71,14 @@ public class SwerveMod implements SwerveModule
         
         // angleEncoder.restoreFactoryDefaults();
         // angleEncoder.configAllSettings(new SwerveConfig().canCoderConfig);
-       
-        relDriveEncoder = mDriveMotor.getEncoder();
+        
+        angleEncoder = mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        driveEncoder = mDriveMotor.getAbsoluteEncoder(Type.kDutyCycle);
         // relDriveEncoder.setPosition(0);
 
          
-        relDriveEncoder.setPositionConversionFactor(SwerveConfig.driveRevToMeters);
-        relDriveEncoder.setVelocityConversionFactor(SwerveConfig.driveRpmToMetersPerSecond);
+        driveEncoder.setPositionConversionFactor(SwerveConfig.driveRevToMeters);
+        driveEncoder.setVelocityConversionFactor(SwerveConfig.driveRpmToMetersPerSecond);
         angleEncoder.setInverted(true);
         
         // relAngleEncoder = mAngleMotor.getAb();
@@ -136,7 +136,7 @@ public class SwerveMod implements SwerveModule
         
         
         // CTREModuleState functions for any motor type.
-        desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
+        // desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
 
@@ -193,6 +193,8 @@ public class SwerveMod implements SwerveModule
        
         
         controller.setReference(degReference, ControlType.kPosition, 0);
+
+        
         
     }
 
@@ -232,7 +234,7 @@ public class SwerveMod implements SwerveModule
     public SwerveModuleState getState()
     {
         return new SwerveModuleState(
-            relDriveEncoder.getVelocity(),
+            driveEncoder.getVelocity(),
             getAngle()
         ); 
     }
@@ -240,7 +242,7 @@ public class SwerveMod implements SwerveModule
     public SwerveModulePosition getPosition()
     {
         return new SwerveModulePosition(
-            relDriveEncoder.getPosition(), 
+            driveEncoder.getPosition(), 
             getAngle()
         );
     }
