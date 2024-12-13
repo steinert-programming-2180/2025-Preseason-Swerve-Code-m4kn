@@ -246,4 +246,12 @@ public class SwerveMod implements SwerveModule
             getAngle()
         );
     }
+
+    public CANSparkFlex getDriveMotor() {
+        return this.mDriveMotor;
+    }
+
+    public CANSparkFlex getAngleMotor() {
+        return this.mAngleMotor;
+    }
 }

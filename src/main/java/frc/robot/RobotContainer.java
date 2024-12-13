@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.swerve.Swerve;
@@ -31,15 +32,20 @@ public class RobotContainer {
 	private final int rotationAxis = PS5Controller.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton zeroGyro = new JoystickButton(driver, PS5Controller.Button.kOptions.value);
+    private final JoystickButton robotCentric = new JoystickButton(driver, PS5Controller.Button.kL1.value);
 
-    private final JoystickButton dampen = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton dampen = new JoystickButton(driver, PS5Controller.Button.kR1.value);
 
     private final POVButton up = new POVButton(driver, 90);
     private final POVButton down = new POVButton(driver, 270);
     private final POVButton right = new POVButton(driver, 180);
     private final POVButton left = new POVButton(driver, 0);
+
+    private final JoystickButton square = new JoystickButton(driver, PS5Controller.Button.kSquare.value);
+    private final JoystickButton triangle = new JoystickButton(driver, PS5Controller.Button.kTriangle.value);
+    private final JoystickButton circle = new JoystickButton(driver, PS5Controller.Button.kCircle.value);
+    private final JoystickButton cross = new JoystickButton(driver, PS5Controller.Button.kCross.value);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
@@ -61,8 +67,6 @@ public class RobotContainer {
         );
 
         SmartDashboard.putNumber("Rotation Controller Axis", rotationAxis);
-
-
 
 
         // Configure the button bindings
@@ -97,6 +101,11 @@ public class RobotContainer {
             new InstantCommand(() -> States.driveState = States.DriveStates.d270)).onFalse(
             new InstantCommand(() -> States.driveState = States.DriveStates.standard)
             );
+
+        square.onTrue(
+            s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward))/*.onFalse(
+            new InstantCommand(() -> States.driveState = States.DriveStates.standard)    
+            )*/;
 
     }
 
