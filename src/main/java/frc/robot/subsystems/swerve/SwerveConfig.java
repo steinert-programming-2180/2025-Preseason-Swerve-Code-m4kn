@@ -79,8 +79,14 @@ public class SwerveConfig
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 
+    /*Angle Motor Characterization Values
+     */
+    public static final double angleKS = 0.060106;
+    public static final double angleKV = 0.0020227;
+    public static final double angleKA = 0.0008773;
+
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.1;
+    public static final double angleKP = 0.0023972;
     public static final double angleKI = 0;
     public static final double angleKD = 0;
     public static final double angleKF = 0;
@@ -93,9 +99,9 @@ public class SwerveConfig
 
     /* Drive Motor Characterization Values 
      * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
-    public static final double driveKS = (0.32); 
-    public static final double driveKV = (1.51);
-    public static final double driveKA = (0.27);
+    public static final double driveKS = (0.014599); 
+    public static final double driveKV = (0.0027291);
+    public static final double driveKA = (0.0007147);
 
     /* Swerve Profiling Values */
     /** Meters per Second */

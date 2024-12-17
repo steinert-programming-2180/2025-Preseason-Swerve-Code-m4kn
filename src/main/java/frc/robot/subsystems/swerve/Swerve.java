@@ -66,7 +66,7 @@ public class Swerve extends SubsystemBase {
         new SysIdRoutine.Mechanism(
             (Measure<Voltage> voltage) -> {
                 for (SwerveModule mod : mSwerveMods) {
-                    mod.getDriveMotor().setVoltage(voltage.in(Volts));
+                    mod.getAngleMotor().setVoltage(voltage.in(Volts) / 12);
                     // mod.getAngleMotor().setVoltage(voltage.in(Volts));
                 }
             },

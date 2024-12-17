@@ -31,7 +31,7 @@ public class TeleopSwerve extends Command {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
-        rotationController = new PIDController(1, 0, 0 );
+        rotationController = new PIDController(1, 0, 0);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(0.01);
 
@@ -51,6 +51,9 @@ public class TeleopSwerve extends Command {
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
         
         SmartDashboard.putNumber("Right X Rotation", rotationVal);
+        SmartDashboard.putNumber("translationVal", translationVal);
+        SmartDashboard.putNumber("strafeVal", strafeVal);
+        //SmartDashboard.putNumber("Encoder value", 1);
 
         //heading direction state
         switch(States.driveState){
@@ -80,7 +83,7 @@ public class TeleopSwerve extends Command {
             
                 //normal
                 rotationVal = rotationVal * SwerveConfig.maxAngularVelocity;
-                // rotationVal = 0;
+                //rotationVal = 0;
                 break;
         }
 

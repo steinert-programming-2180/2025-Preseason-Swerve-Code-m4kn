@@ -102,10 +102,10 @@ public class RobotContainer {
             new InstantCommand(() -> States.driveState = States.DriveStates.standard)
             );
 
-        square.onTrue(
-            s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward))/*.onFalse(
-            new InstantCommand(() -> States.driveState = States.DriveStates.standard)    
-            )*/;
+        square.onTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        circle.onTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        triangle.onTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        cross.onTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
     }
 

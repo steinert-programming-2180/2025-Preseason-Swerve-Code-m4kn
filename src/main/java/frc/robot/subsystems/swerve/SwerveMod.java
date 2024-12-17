@@ -35,6 +35,7 @@ public class SwerveMod implements SwerveModule
 
     private CANSparkFlex mAngleMotor;
     private CANSparkFlex mDriveMotor;
+    private AbsoluteEncoder absEncoder;
 
     private SparkAbsoluteEncoder angleEncoder;
     // private RelativeEncoder relAngleEncoder;
@@ -54,6 +55,8 @@ public class SwerveMod implements SwerveModule
         /* Drive Motor Config */
         mDriveMotor = new CANSparkFlex(moduleConstants.driveMotorID,  MotorType.kBrushless);
         configDriveMotor();
+
+        absEncoder=mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
          /* Angle Encoder Config */
         configEncoders();
@@ -189,7 +192,8 @@ public class SwerveMod implements SwerveModule
 
         SmartDashboard.putNumber("degReference", degReference);
         SmartDashboard.putNumber("Angle kP", controller.getP());
-     
+        SmartDashboard.putNumber("Abs Encoder pos", absEncoder.getPosition());
+        SmartDashboard.putNumber("Abs Encoder vel", absEncoder.getVelocity());
        
         
         controller.setReference(degReference, ControlType.kPosition, 0);
