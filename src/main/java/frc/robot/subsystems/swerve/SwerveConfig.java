@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import frc.lib.util.swerveUtil.COTSFalconSwerveConstants;
+import frc.lib.util.swerveUtil.COTSNeoSwerveConstants;
 
 
 public class SwerveConfig 
@@ -26,8 +26,8 @@ public class SwerveConfig
 
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
-    public static final COTSFalconSwerveConstants chosenModule =  
-        COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
+    public static final COTSNeoSwerveConstants chosenModule =  
+        COTSNeoSwerveConstants.SDSMK4i(COTSNeoSwerveConstants.driveGearRatios.SDSMK4i_L2);
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(27); 
@@ -86,7 +86,7 @@ public class SwerveConfig
     public static final double angleKA = 0.0008773;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.0023972;
+    public static final double angleKP = 0.01;
     public static final double angleKI = 0;
     public static final double angleKD = 0;
     public static final double angleKF = 0;

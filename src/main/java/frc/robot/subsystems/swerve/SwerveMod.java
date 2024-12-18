@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems.swerve;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -35,11 +36,15 @@ public class SwerveMod implements SwerveModule
 
     private CANSparkFlex mAngleMotor;
     private CANSparkFlex mDriveMotor;
-    private AbsoluteEncoder absEncoder;
+    // private AbsoluteEncoder absEncoder;
 
     private SparkAbsoluteEncoder angleEncoder;
     // private RelativeEncoder relAngleEncoder;
     private SparkAbsoluteEncoder driveEncoder;
+
+    private SimpleMotorFeedforward ffcontroller;
+    private SimpleMotorFeedforward ffAngleController;
+
 
 
     public SwerveMod(int moduleNumber, RevSwerveModuleConstants moduleConstants)
@@ -56,10 +61,13 @@ public class SwerveMod implements SwerveModule
         mDriveMotor = new CANSparkFlex(moduleConstants.driveMotorID,  MotorType.kBrushless);
         configDriveMotor();
 
-        absEncoder=mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        // absEncoder=mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
          /* Angle Encoder Config */
         configEncoders();
+
+        ffcontroller = new SimpleMotorFeedforward(SwerveConfig.driveKS, SwerveConfig.driveKV, SwerveConfig.driveKA);
+        ffAngleController = new SimpleMotorFeedforward(SwerveConfig.angleKS, SwerveConfig.angleKV, SwerveConfig.angleKA);
 
 
        // lastAngle = getState().angle;
@@ -83,6 +91,7 @@ public class SwerveMod implements SwerveModule
         driveEncoder.setPositionConversionFactor(SwerveConfig.driveRevToMeters);
         driveEncoder.setVelocityConversionFactor(SwerveConfig.driveRpmToMetersPerSecond);
         angleEncoder.setInverted(true);
+        angleEncoder.setPositionConversionFactor(360);
         
         // relAngleEncoder = mAngleMotor.getAb();
         // relAngleEncoder.setPositionConversionFactor(SwerveConfig.DegreesPerTurnRotation);
@@ -104,6 +113,8 @@ public class SwerveMod implements SwerveModule
         controller.setI(SwerveConfig.angleKI,0);
         controller.setD(SwerveConfig.angleKD,0);
         controller.setFF(SwerveConfig.angleKF,0);
+        // controller.setPositionPIDWrappingMaxInput(1);
+        // controller.setPositionPIDWrappingMinInput(-1);
         controller.setOutputRange(-SwerveConfig.anglePower, SwerveConfig.anglePower);
         mAngleMotor.setSmartCurrentLimit(SwerveConfig.angleContinuousCurrentLimit);
        
@@ -139,7 +150,9 @@ public class SwerveMod implements SwerveModule
         
         
         // CTREModuleState functions for any motor type.
-        // desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
+        // desiredState = CTREModuleState.optimize(desiredState, getState().angle);
+        
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
 
@@ -156,17 +169,19 @@ public class SwerveMod implements SwerveModule
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop)
     {
-       
-        if(isOpenLoop)
-        {
-            double percentOutput = desiredState.speedMetersPerSecond / SwerveConfig.maxSpeed;
-            mDriveMotor.set(percentOutput);
-            return;
-        }
- 
         double velocity = desiredState.speedMetersPerSecond;
         
         SparkPIDController controller = mDriveMotor.getPIDController();
+
+        if(isOpenLoop)
+        {
+            double percentOutput = desiredState.speedMetersPerSecond / SwerveConfig.maxSpeed;
+            double feedforward = ffcontroller.calculate(velocity);
+            mDriveMotor.set(percentOutput + feedforward);
+            return;
+        }
+ 
+        
         controller.setReference(velocity, ControlType.kVelocity, 0);
         
     }
@@ -183,6 +198,7 @@ public class SwerveMod implements SwerveModule
         //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
         SparkPIDController controller = mAngleMotor.getPIDController();
+        // controller.setFeedbackDevice(angleEncoder);
         controller.setP(SwerveConfig.angleKP);
         controller.setI(SwerveConfig.angleKI);
         controller.setD(SwerveConfig.angleKD);
@@ -191,12 +207,14 @@ public class SwerveMod implements SwerveModule
         double degReference = angle.getDegrees();
 
         SmartDashboard.putNumber("degReference", degReference);
+        SmartDashboard.putNumber("kAngleModDistancetoSetpoint", angleEncoder.getPosition());
         SmartDashboard.putNumber("Angle kP", controller.getP());
-        SmartDashboard.putNumber("Abs Encoder pos", absEncoder.getPosition());
-        SmartDashboard.putNumber("Abs Encoder vel", absEncoder.getVelocity());
+        // SmartDashboard.putNumber("Abs Encoder pos", absEncoder.getPosition());
+        // SmartDashboard.putNumber("Abs Encoder vel", absEncoder.getVelocity());
        
         
-        controller.setReference(degReference, ControlType.kPosition, 0);
+        
+        controller.setReference(degReference, ControlType.kPosition);
 
         
         
