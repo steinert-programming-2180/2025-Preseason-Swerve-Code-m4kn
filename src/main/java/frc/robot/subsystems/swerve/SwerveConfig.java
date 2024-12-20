@@ -1,9 +1,4 @@
 package frc.robot.subsystems.swerve;
-
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,14 +9,10 @@ import frc.lib.util.swerveUtil.COTSNeoSwerveConstants;
 
 public class SwerveConfig 
 {
-    
-    // public CANCoderConfiguration canCoderConfig;
-
-    //
     public static final IdleMode driveIdleMode = IdleMode.kBrake;
     public static final IdleMode angleIdleMode = IdleMode.kBrake;
     public static final double drivePower = 1;
-    public static final double anglePower = .9;
+    public static final double anglePower = 1;
 
 
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
@@ -32,7 +23,7 @@ public class SwerveConfig
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(27); 
     public static final double wheelBase = Units.inchesToMeters(27); 
-    public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
+    public static final double wheelCircumference = chosenModule.wheelCircumference;
 
 
     /* Swerve Kinematics 
@@ -45,15 +36,15 @@ public class SwerveConfig
 
 
     /* Module Gear Ratios */
-    public static final double driveGearRatio = 5.9;
-    public static final double angleGearRatio = 5.9;
+    public static final double driveGearRatio = chosenModule.driveGearRatio;
+    public static final double angleGearRatio = chosenModule.angleGearRatio;
 
     // encoder setup
     // meters per rotation
-    public static final double driveRevToMeters =  wheelCircumference / (driveGearRatio );
-    public static final double driveRpmToMetersPerSecond = driveRevToMeters/60 ;
+    public static final double driveRevToMeters =  wheelCircumference / (driveGearRatio);
+    public static final double driveRpmToMetersPerSecond = driveRevToMeters / 60 ;
     // the number of degrees that a single rotation of the turn motor turns the wheel.
-    public static final double DegreesPerTurnRotation = 360/angleGearRatio;
+    public static final double DegreesPerTurnRotation = 360 / angleGearRatio;
 
     
     /* Motor Inverts */
@@ -61,7 +52,7 @@ public class SwerveConfig
     public static final boolean driveMotorInvert = chosenModule.driveMotorInvert;
 
     /* Angle Encoder Invert */
-    public static final boolean canCoderInvert = chosenModule.canCoderInvert;
+    // public static final boolean canCoderInvert = chosenModule.canCoderInvert;
 
     /* Swerve Current Limiting */
     public static final int angleContinuousCurrentLimit = 20;
@@ -86,7 +77,7 @@ public class SwerveConfig
     public static final double angleKA = 0.0008773;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.01;
+    public static final double angleKP = 0.05;
     public static final double angleKI = 0;
     public static final double angleKD = 0;
     public static final double angleKF = 0;
