@@ -33,7 +33,12 @@ public class Swerve extends SubsystemBase {
     private final AHRS gyro=new AHRS();
     //public Pigeon2 gyro;
 
-    
+    private ChassisSpeeds desiredChassisSpeeds;
+    private SwerveModuleState[] swerveModuleStates;
+
+    private ChassisSpeeds updatedSpeeds;
+    private Twist2d twistForPose;
+    private Pose2d futureRobotPose;
 
 
 
@@ -83,15 +88,15 @@ public class Swerve extends SubsystemBase {
         return sysIdRoutine.dynamic(direction);
     }
 
-    private static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
+    private ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
         final double LOOP_TIME_S = 0.02;
-        Pose2d futureRobotPose =
+        futureRobotPose =
             new Pose2d(
                 originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
                 originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
                 Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
-        Twist2d twistForPose = GeometryUtils.log(futureRobotPose);
-        ChassisSpeeds updatedSpeeds =
+        twistForPose = GeometryUtils.log(futureRobotPose);
+        updatedSpeeds =
             new ChassisSpeeds(
                 twistForPose.dx / LOOP_TIME_S,
                 twistForPose.dy / LOOP_TIME_S,
@@ -101,7 +106,7 @@ public class Swerve extends SubsystemBase {
 
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        ChassisSpeeds desiredChassisSpeeds =
+        desiredChassisSpeeds =
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
         translation.getX(),
         translation.getY(),
@@ -113,7 +118,7 @@ public class Swerve extends SubsystemBase {
                 rotation);
         desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
 
-        SwerveModuleState[] swerveModuleStates = SwerveConfig.swerveKinematics.toSwerveModuleStates(desiredChassisSpeeds);
+        swerveModuleStates = SwerveConfig.swerveKinematics.toSwerveModuleStates(desiredChassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConfig.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){

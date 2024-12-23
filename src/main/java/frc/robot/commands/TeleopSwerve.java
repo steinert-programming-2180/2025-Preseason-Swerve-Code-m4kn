@@ -5,6 +5,7 @@ import frc.robot.States;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveConfig;
 
+import java.sql.Timestamp;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -25,11 +26,19 @@ public class TeleopSwerve extends Command {
     private BooleanSupplier dampen;
     private DoubleSupplier speedDial;
 
+    private double translationVal;
+    private double strafeVal;
+    private double rotationVal;
+
     private PIDController rotationController;
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier dampen, DoubleSupplier speedDial) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
+
+        translationVal = 0.0;
+        strafeVal = 0.0;
+        rotationVal = 0.0;
 
         rotationController = new PIDController(1, 0, 0);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -41,18 +50,21 @@ public class TeleopSwerve extends Command {
         this.robotCentricSup = robotCentricSup;
         this.dampen = dampen;
         this.speedDial = speedDial;
+
     }
 
     @Override
     public void execute() {
         /* Get Values, Deadband*/
-        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
-        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
-        
+
+        translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
+        strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
+        rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
+
         SmartDashboard.putNumber("Right X Rotation", rotationVal);
         SmartDashboard.putNumber("translationVal", translationVal);
         SmartDashboard.putNumber("strafeVal", strafeVal);
+
         //SmartDashboard.putNumber("Encoder value", 1);
 
         //heading direction state
@@ -86,8 +98,6 @@ public class TeleopSwerve extends Command {
                 //rotationVal = 0;
                 break;
         }
-
-
 
         /* Drive */
         s_Swerve.drive(
