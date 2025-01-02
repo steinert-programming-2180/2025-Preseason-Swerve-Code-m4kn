@@ -15,7 +15,7 @@ public class SwerveConfig
     public static final double anglePower = 1;
 
 
-    public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
+    public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
     public static final COTSNeoSwerveConstants chosenModule =  
         COTSNeoSwerveConstants.SDSMK4i(COTSNeoSwerveConstants.driveGearRatios.SDSMK4i_L2);
@@ -55,12 +55,12 @@ public class SwerveConfig
     // public static final boolean canCoderInvert = chosenModule.canCoderInvert;
 
     /* Swerve Current Limiting */
-    public static final int angleContinuousCurrentLimit = 40;
+    public static final int angleContinuousCurrentLimit = 35;
     public static final int anglePeakCurrentLimit = 60;
     public static final double anglePeakCurrentDuration = 0.1;
     public static final boolean angleEnableCurrentLimit = true;
 
-    public static final int driveContinuousCurrentLimit = 40;
+    public static final int driveContinuousCurrentLimit = 35;
     public static final int drivePeakCurrentLimit = 60;
     public static final double drivePeakCurrentDuration = 0.1;
     public static final boolean driveEnableCurrentLimit = true;

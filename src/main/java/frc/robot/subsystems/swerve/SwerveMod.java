@@ -64,7 +64,7 @@ public class SwerveMod implements SwerveModule
 
         // absEncoder=mAngleMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
-         /* Angle Encoder Config */
+         /* Drive and Angle Encoder Config */
         configEncoders();
 
         // ffcontroller = new SimpleMotorFeedforward(SwerveConfig.driveKS, SwerveConfig.driveKV, SwerveConfig.driveKA);
