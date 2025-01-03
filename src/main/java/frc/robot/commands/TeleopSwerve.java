@@ -61,7 +61,7 @@ public class TeleopSwerve extends Command {
         strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
         rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * (dampen.getAsBoolean() ? 0.2 : 1) * ((speedDial.getAsDouble() + 1) / 2);
 
-        SmartDashboard.putNumber("Right X Rotation", rotationVal);
+        SmartDashboard.putNumber("rotationVal", rotationVal);
         SmartDashboard.putNumber("translationVal", translationVal);
         SmartDashboard.putNumber("strafeVal", strafeVal);
 

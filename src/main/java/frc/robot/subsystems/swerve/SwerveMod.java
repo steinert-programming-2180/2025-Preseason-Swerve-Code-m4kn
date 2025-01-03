@@ -43,6 +43,8 @@ public class SwerveMod implements SwerveModule
     private double degReference;
     private double percentOutput;
 
+    private Rotation2d delta;
+
 
 
     public SwerveMod(int moduleNumber, RevSwerveModuleConstants moduleConstants)
@@ -146,7 +148,7 @@ public class SwerveMod implements SwerveModule
         // CTREModuleState functions for any motor type.
         // desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         
-        // desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        desiredState = this.optimize(desiredState, getState().angle.minus(Rotation2d.fromDegrees(180)));
         setSpeed(desiredState, isOpenLoop);
         setAngle(desiredState);
 
@@ -180,12 +182,11 @@ public class SwerveMod implements SwerveModule
     private void setAngle(SwerveModuleState desiredState)
     {
         //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        // if(Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConfig.maxSpeed * 0.01)) 
-        // {
-        //     mAngleMotor.stopMotor();
-        //     return;
-
-        // }
+        if(Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConfig.maxSpeed * 0.01)) 
+        {
+            mAngleMotor.stopMotor();
+            return;
+        }
 
         Rotation2d angle =
         (Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConfig.maxSpeed * 0.01))
@@ -202,7 +203,7 @@ public class SwerveMod implements SwerveModule
         SmartDashboard.putNumber("Module #" + moduleNumber + " Pos: ", getAngle().getDegrees());
 
         // SmartDashboard.putNumber("degReference", degReference);
-        // SmartDashboard.putNumber("kAngleModDistancetoSetpoint", angleEncoder.getPosition());
+        // SmartDashboard.putNumber("current position", angleEncoder.getPosition());
         // SmartDashboard.putNumber("Angle kP", controller.getP());
         // SmartDashboard.putNumber("Abs Encoder pos", absEncoder.getPosition());
         // SmartDashboard.putNumber("Abs Encoder vel", absEncoder.getVelocity());
@@ -210,8 +211,20 @@ public class SwerveMod implements SwerveModule
         
         
         angleController.setReference(angle.getDegrees() + 180, ControlType.kPosition);  
-        lastAngle = angle;
+        lastAngle = angle.plus(Rotation2d.fromDegrees(180));
     }
+
+    private SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+        delta = desiredState.angle.minus(currentAngle);
+
+        if (Math.abs(delta.getDegrees()) > 90) {
+            return new SwerveModuleState(
+                -desiredState.speedMetersPerSecond,
+                desiredState.angle.rotateBy(Rotation2d.fromDegrees(180)));
+        } else {
+            return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+    }
+  }
 
    
 
